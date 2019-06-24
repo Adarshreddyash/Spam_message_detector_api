@@ -1,20 +1,14 @@
-from flask import Flask,render_template,url_for,request
 import pandas as pd 
 import numpy as np
 import pickle
+import json
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.externals import joblib
 
 
-app = Flask(__name__)
 
-@app.route('/')
-def home():
-	return render_template('home.html')
-
-@app.route('/predict',methods=['POST'])
-def predict():
+def predict(request):
 	df= pd.read_csv("spam.csv", encoding="latin-1")
 	df.drop(['Unnamed: 2', 'Unnamed: 3', 'Unnamed: 4'], axis=1, inplace=True)
 	# Features and Labels
@@ -38,14 +32,17 @@ def predict():
 	# NB_spam_model = open('NB_spam_model.pkl','rb')
 	# clf = joblib.load(NB_spam_model)
 
-	if request.method == 'POST':
-		message = request.form['message']
-		data = [message]
+	if request == 1:
+		file1 = open("ash.txt","r")
+		data = file1
 		vect = cv.transform(data).toarray()
 		my_prediction = clf.predict(vect)
+		print(my_prediction)
+		if np.any(my_prediction) == 1:
+			print("shut that's a spam")
+		else:
+			print("not a spam !")
 
-	return my_prediction
-
-
-if __name__ == '__main__':
-	app.run(debug=True)
+		
+predict(1)
+		
